@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ToDo</title>
+</head>
+
+<body onload="loadTodos()">
+    <h1>ToDo - Liste</h1>
+    <form onsubmit="addToDo(); return false">
+        <input type="text" placeholder="Neue Aufgabe" id="todoInput">
+        <button>Speichern</button>
+    </form>
+    <ul id="todoList">
+    </ul>
+
+    <script>
+        let todos = [];
+        async function loadTodos() {
+            const url = 'http://localhost:3000/todos';
+            let resp = await fetch(url);
+            todos = await resp.json();
+            render();
+        }
+
+
+        function addToDo() {
+            let todoText = document.getElementById('todoInput').value;
+            todos.push(todoText);
+
+            addToServer(todoText);
+            render();
+        }
+
+        function addToServer(todoText) {
+            fetch('http://127.0.0.1:3000/todos', {
+                body: JSON.stringify({ "title": todoText }),
+                method: 'POST'
+            });
+        }
+
+
+        function render() {
+            let list = document.getElementById('todoList');
+            list.innerHTML = '';
+            todos.forEach(todo => list.innerHTML += /*html*/ `<li>${todo.title}</li>`);
+        }
+    </script>
+</body>
+
+</html>
